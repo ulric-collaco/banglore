@@ -5,6 +5,8 @@
 skills
 # Ignore files with .skill extension
 *.skill
+# Ignore generated lock file for skills metadata
+/skills-lock.json
 
 # Common project ignores
 node_modules/
