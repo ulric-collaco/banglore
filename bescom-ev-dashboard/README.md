@@ -1,6 +1,6 @@
 # BESCOM EV Charging Optimization Dashboard
 
-Decision-support dashboard for Bengaluru EV charging infrastructure planning. Built with React 18, Vite, deck.gl, and an OpenStreetMap raster basemap. Station data is parsed from a development-time Open Charge Map JSON export with a local fallback, and all algorithmic work runs locally in pure JavaScript.
+Decision-support dashboard for Bengaluru EV charging infrastructure planning. Built with React 18, Vite, deck.gl, and Mapbox GL JS. Existing station coordinates are parsed from the local India EV charging station CSV, candidate future sites are synthetic, and all algorithmic work runs locally in pure JavaScript.
 
 ## Setup
 
@@ -9,13 +9,20 @@ npm install
 npm run dev
 ```
 
-No Mapbox token is required. The map uses public OpenStreetMap raster tiles through deck.gl's `TileLayer`.
+The app reads Mapbox settings from Vite env variables. Create a local `.env` or `.env.local` in the `bescom-ev-dashboard` folder and add your token:
+
+```bash
+# file: bescom-ev-dashboard/.env
+VITE_MAPBOX_TOKEN=pk.your_mapbox_public_token_here
+```
+
+An example file is provided at `bescom-ev-dashboard/.env.example`.
 
 ## Modes
 
 ### Load Monitor
 
-Shows parsed OCM Bengaluru charging stations on a tilted deck.gl map. The 24-hour slider updates marker size, color, heatmap intensity, critical station count, average network load, total kW in use, and the recommended four-hour off-peak window.
+Shows CSV-backed Bengaluru charging stations on a tilted dark Mapbox basemap with 3D buildings, extruded load columns, traffic-flow animation, and a heatmap. The 24-hour slider updates marker color, heatmap intensity, critical station count, average network load, total kW in use, and the recommended four-hour off-peak window.
 
 ### Infrastructure Planner
 
@@ -29,7 +36,7 @@ Replaces the map with an audit panel explaining the algorithms behind the dashbo
 
 ### K-Means Clustering
 
-`src/algorithms/kmeans.js` normalizes latitude, longitude, and average daily load, then groups loaded stations into a bounded number of clusters based on station count. It uses K-Means++ seeding with a deterministic random stream, assigns each station to the nearest centroid, recomputes centroid means, and stops when movement falls below `1e-6` or the iteration cap is reached.
+`src/algorithms/kmeans.js` normalizes latitude, longitude, and average daily load, then groups the loaded Bengaluru charging stations into six clusters. It uses K-Means++ seeding with a deterministic random stream, assigns each station to the nearest centroid, recomputes centroid means, and stops when movement falls below `1e-6` or the iteration cap is reached.
 
 ### Polynomial Regression
 

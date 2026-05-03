@@ -26,7 +26,7 @@ export function useAlgorithms(stations, loadProfiles, recommendedLocations) {
       };
     });
 
-    const k = Math.min(6, Math.max(1, Math.floor(stationPoints.length / 4)));
+    const k = 6;
     const kmeansResult = kMeans(stationPoints, k);
     const clusterLoads = Array.from({ length: k }, (_, clusterIndex) => {
       const members = stationPoints.filter((_, index) => kmeansResult.assignments[index] === clusterIndex);

@@ -27,6 +27,7 @@ export default function LegendPanel({ mode }) {
           <em>{range}</em>
         </div>
       ))}
+      {mode === 0 && <p>Cyan and orange streams are simulated traffic/load flows into the CBD demand sink.</p>}
       {mode === 1 && <p>White arcs connect candidate sites to the two nearest existing stations.</p>}
     </aside>
   );

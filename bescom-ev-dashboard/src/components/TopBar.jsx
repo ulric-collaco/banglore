@@ -36,12 +36,8 @@ export default function TopBar({ mode, onModeChange, stationCount }) {
         <span className={styles.liveDot} />
         <span>Live Simulation</span>
         <span className={styles.metaSeparator}>|</span>
-        <span className={styles.sourceBadge}>
-          <span className={styles.liveDot} />
-          Live <a href="https://openchargemap.io" target="_blank" rel="noreferrer">OCM</a> Data
-        </span>
-        <span className={styles.metaSeparator}>|</span>
-        <span className={styles.stationCount}>{stationCount} stations loaded</span>
+        <span className={styles.sourceBadge}>Bengaluru CSV</span>
+        <span className={styles.stationCount}>{stationCount} sites</span>
       </div>
     </header>
   );
