@@ -1,0 +1,53 @@
+.tooltip {
+  position: fixed;
+  z-index: 30;
+  width: 240px;
+  padding: 14px 16px;
+  pointer-events: none;
+  background: white;
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: 0 18px 40px rgba(15, 23, 42, 0.14);
+  animation: enter 150ms ease;
+}
+@keyframes enter {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.tooltip header strong {
+  display: block;
+  color: var(--color-text-primary);
+  font-size: 14px;
+  font-weight: 600;
+}
+.tooltip header span {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.separator {
+  height: 1px;
+  margin: 10px 0;
+  background: var(--color-border);
+}
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 6px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+.row strong {
+  color: var(--color-text-primary);
+  font: 500 13px 'JetBrains Mono', monospace;
+}
+.note {
+  margin: 12px 0 0;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+.critical, .high { color: var(--color-critical); background: rgba(239, 68, 68, 0.1); }
+.moderate, .medium { color: var(--color-warning); background: rgba(245, 158, 11, 0.12); }
+.ok, .low { color: var(--color-bescom-green); background: var(--color-bescom-green-light); }

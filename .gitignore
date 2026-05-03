@@ -1,0 +1,36 @@
+
+# Ignore any directory named "skills" anywhere in the repo
+**/skills/
+# Ignore any file named "skills"
+skills
+# Ignore files with .skill extension
+*.skill
+
+# Common project ignores
+node_modules/
+dist/
+build/
+coverage/
+.cache/
+.env
+.env.*
+.env.local
+.DS_Store
+.vscode/
+.idea/
+*.log
+tmp/
+logs/
+*.pyc
+__pycache__/
+*.sqlite3
+*.db
+
+# OS files
+Thumbs.db
+ehthumbs.db
+
+# Editor backup files
+*~
+*.swp
+*.swo
