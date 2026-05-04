@@ -19,6 +19,7 @@ function plannerReducer(state, action) {
 export default function App() {
   const [mode, setMode] = useState(0);
   const [vizMode, setVizMode] = useState('heatmap');
+  const [panelOpen, setPanelOpen] = useState(false);
   const [hour, setHour] = useState(18);
   const [isPlaying, setIsPlaying] = useState(false);
   const [plannerState, dispatchPlanner] = useReducer(plannerReducer, initialPlannerState);
@@ -55,8 +56,11 @@ export default function App() {
             stationsWithLoad={loadData.stationsWithLoad}
             recommendedSites={plannerSites}
             vizMode={vizMode}
+            hour={hour}
+            panelOpen={panelOpen}
+            setPanelOpen={setPanelOpen}
           />
-          <div className="vizSwitcher">
+          <div className={`vizSwitcher ${panelOpen ? 'panelOpen' : ''}`}>
             {['heatmap', 'hex', 'coverage'].map(m => (
               <button 
                 key={m} 
@@ -67,7 +71,7 @@ export default function App() {
               </button>
             ))}
           </div>
-          <LegendPanel mode={mode} />
+          <LegendPanel mode={mode} vizMode={vizMode} />
           {mode < 2 && (
             <ControlPanel
               mode={mode}
