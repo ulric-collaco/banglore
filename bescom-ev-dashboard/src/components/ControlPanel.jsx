@@ -19,13 +19,7 @@ export default function ControlPanel({
     <section className={styles.panel}>
       {mode === 0 ? (
         <>
-          <div className={styles.statsRow}>
-            <LoadBadge label="Critical Load" value={loadStats.criticalCount} tone={loadStats.criticalCount ? 'critical' : 'default'} trendValue={loadStats.loadTrend.criticalCount} trendSuffix="" />
-            <LoadBadge label="Avg Network Load" value={`${Math.round(loadStats.avgNetworkLoad)}%`} trendValue={loadStats.loadTrend.avgNetworkLoad} trendSuffix="%" />
-            <LoadBadge label="Total kW in Use" value={`${Math.round(loadStats.totalKwInUse)} kW`} trendValue={loadStats.loadTrend.totalKwInUse} trendSuffix=" kW" />
-            <LoadBadge label="Off-Peak Window" value={loadStats.offPeakWindow} />
-          </div>
-          <div className={styles.sliderRow} style={{ flexWrap: 'wrap' }}>
+          <div className={styles.sliderRow} style={{ flexWrap: 'wrap', marginBottom: '16px' }}>
             <div style={{ width: '100%', marginBottom: '8px' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '12px', color: '#94a3b8', marginBottom: '4px' }}>
                 <span>Network Load (24h)</span>
@@ -79,6 +73,12 @@ export default function ControlPanel({
             >
               {isPlaying ? 'II' : '▶'}
             </button>
+          </div>
+          <div className={styles.statsRow}>
+            <LoadBadge label="Critical Load" value={loadStats.criticalCount} tone={loadStats.criticalCount ? 'critical' : 'default'} trendValue={loadStats.loadTrend.criticalCount} trendSuffix="" />
+            <LoadBadge label="Avg Network Load" value={`${Math.round(loadStats.avgNetworkLoad)}%`} trendValue={loadStats.loadTrend.avgNetworkLoad} trendSuffix="%" />
+            <LoadBadge label="Total kW in Use" value={`${Math.round(loadStats.totalKwInUse)} kW`} trendValue={loadStats.loadTrend.totalKwInUse} trendSuffix=" kW" />
+            <LoadBadge label="Off-Peak Window" value={loadStats.offPeakWindow} />
           </div>
         </>
       ) : (

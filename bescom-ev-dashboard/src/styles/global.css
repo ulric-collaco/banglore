@@ -55,7 +55,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 .osmAttribution {
   position: fixed;
   right: 8px;
-  bottom: 126px;
+  bottom: 196px;
   z-index: 18;
   padding: 3px 6px;
   border-radius: 4px;
