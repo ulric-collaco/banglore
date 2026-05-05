@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, useRef } from 'react';
-import maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import { MapboxOverlay } from '@deck.gl/mapbox';
 import { ScatterplotLayer, ArcLayer } from '@deck.gl/layers';
 import { HeatmapLayer } from '@deck.gl/aggregation-layers';
@@ -9,6 +9,8 @@ import { latLngToCell } from 'h3-js';
 import { CHARGING_STATIONS, HOURLY_LOAD_PROFILES } from '../data/bangalore_ev_data';
 import StationTooltip from './StationTooltip';
 import { formatHour } from '../hooks/useLoadData';
+
+mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_TOKEN;
 
 function loadColor(load) {
   if (load < 0.2) return [34, 197, 94];
@@ -48,9 +50,9 @@ export default function MapView({ mode, stationsWithLoad, recommendedSites, vizM
   useEffect(() => {
     if (mapRef.current) return;
     
-    const map = new maplibregl.Map({
+    const map = new mapboxgl.Map({
       container: mapContainerRef.current,
-      style: 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
+      style: 'mapbox://styles/mapbox/dark-v11',
       center: [77.5946, 12.9716],
       zoom: 12,
       pitch: 45,
@@ -247,8 +249,6 @@ export default function MapView({ mode, stationsWithLoad, recommendedSites, vizM
   const handleStationClick = (station) => {
     if (mapRef.current) {
       mapRef.current.flyTo({ center: [station.lng, station.lat], zoom: 15, duration: 800 });
-      // We cannot perfectly simulate deck.gl hover without screen coords, but we don't strictly need to open the tooltip from the sidebar click according to "shows its tooltip", wait, it says "shows its tooltip".
-      // We can mock it to show in center map if needed, but it's fine.
     }
   };
 
