@@ -7,6 +7,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { BENGALURU_MAX_BOUNDS, MAP_INITIAL_VIEW_STATE, MAPBOX_STYLE, MAPBOX_TOKEN } from '../config';
 import { CHARGING_STATIONS } from '../data/bangalore_ev_data';
 import StationTooltip from './StationTooltip';
+import { createRealisticTrafficPath } from '../utils/roadRouting';
 
 mapboxgl.accessToken = MAPBOX_TOKEN;
 
@@ -53,6 +54,31 @@ export default function MapView({ mode, stationsWithLoad, recommendedSites }) {
   const [viewState, setViewState] = useState(MAP_INITIAL_VIEW_STATE);
   const [hover, setHover] = useState(null);
   const [trafficTick, setTrafficTick] = useState(0);
+  const [trafficRoutes, setTrafficRoutes] = useState([]);
+
+  // Fetch real road paths on mount
+  useEffect(() => {
+    (async () => {
+      const center = [77.5946, 12.9716];
+      const topStations = [...stationsWithLoad]
+        .sort((a, b) => b.load_factor - a.load_factor)
+        .slice(0, 16);
+      
+      const routesWithRealPaths = await Promise.all(
+        topStations.map(async (station, index) => {
+          const path = await createRealisticTrafficPath([station.lng, station.lat], center);
+          return {
+            id: `traffic-${station.id}`,
+            load: station.load_factor,
+            color: trafficColor(station.load_factor),
+            path,
+            offset: index / 16
+          };
+        })
+      );
+      setTrafficRoutes(routesWithRealPaths);
+    })();
+  }, [stationsWithLoad]);
 
   useEffect(() => {
     if (!mapNode.current || mapRef.current) return;
@@ -79,9 +105,9 @@ export default function MapView({ mode, stationsWithLoad, recommendedSites }) {
           minzoom: 10,
           paint: {
             'fill-extrusion-color': '#1e293b',
-            'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 10, 0, 15, ['get', 'height']],
-            'fill-extrusion-base': ['interpolate', ['linear'], ['zoom'], 10, 0, 15, ['get', 'min_height']],
-            'fill-extrusion-opacity': 0.52
+            'fill-extrusion-height': ['interpolate', ['linear'], ['zoom'], 10, 0, 15.5, ['get', 'height']],
+            'fill-extrusion-base': ['interpolate', ['linear'], ['zoom'], 10, 0, 15.5, ['get', 'min_height']],
+            'fill-extrusion-opacity': 0.65
           }
         }, labelLayer?.id);
       }
@@ -100,30 +126,12 @@ export default function MapView({ mode, stationsWithLoad, recommendedSites }) {
   }, [viewState]);
 
   const arcs = useMemo(() => recommendedSites.flatMap(nearestStations), [recommendedSites]);
-  const trafficRoutes = useMemo(() => {
-    const center = [77.5946, 12.9716];
-    return [...stationsWithLoad]
-      .sort((a, b) => b.load_factor - a.load_factor)
-      .slice(0, 16)
-      .map((station, index) => {
-        const bend = [
-          (station.lng + center[0]) / 2 + Math.sin(index * 1.7) * 0.018,
-          (station.lat + center[1]) / 2 + Math.cos(index * 1.3) * 0.012
-        ];
-        return {
-          id: `traffic-${station.id}`,
-          load: station.load_factor,
-          color: trafficColor(station.load_factor),
-          path: [[station.lng, station.lat], bend, center],
-          offset: index / 16
-        };
-      });
-  }, [stationsWithLoad]);
 
-  const vehicles = useMemo(() => trafficRoutes.map((route) => {
+  const vehicles = useMemo(() => trafficRoutes.filter(r => r.path.length > 1).map((route) => {
+    const pathLength = route.path.length - 1;
     const progress = (trafficTick / 240 + route.offset) % 1;
-    const segment = progress < 0.5 ? 0 : 1;
-    const t = segment === 0 ? progress * 2 : (progress - 0.5) * 2;
+    const segment = Math.min(Math.floor(progress * pathLength), pathLength - 1);
+    const t = progress * pathLength - segment;
     const start = route.path[segment];
     const end = route.path[segment + 1];
     return {
