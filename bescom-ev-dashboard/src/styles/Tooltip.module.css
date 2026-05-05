@@ -4,11 +4,11 @@
   width: 240px;
   padding: 14px 16px;
   pointer-events: none;
-  background: rgba(2, 6, 23, 0.84);
-  border: 1px solid var(--color-border);
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid #1e293b;
   border-radius: 10px;
-  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.38);
-  backdrop-filter: blur(18px);
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(8px);
   animation: enter 150ms ease;
 }
 @keyframes enter {
@@ -17,7 +17,7 @@
 }
 .tooltip header strong {
   display: block;
-  color: var(--color-text-primary);
+  color: #f8fafc;
   font-size: 14px;
   font-weight: 600;
 }
@@ -28,7 +28,7 @@
 .separator {
   height: 1px;
   margin: 10px 0;
-  background: var(--color-border);
+  background: #1e293b;
 }
 .row {
   display: flex;
@@ -39,7 +39,7 @@
   font-size: 12px;
 }
 .row strong {
-  color: var(--color-text-primary);
+  color: #f8fafc;
   font: 500 13px 'JetBrains Mono', monospace;
 }
 .note {
