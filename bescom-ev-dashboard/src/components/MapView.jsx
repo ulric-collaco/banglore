@@ -44,6 +44,7 @@ export default function MapView({ mode, stationsWithLoad, recommendedSites, vizM
   
   const [hover, setHover] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
+  const [overlayReady, setOverlayReady] = useState(false);
   
   const arcs = useMemo(() => recommendedSites.flatMap(nearestStations), [recommendedSites]);
 
@@ -58,15 +59,19 @@ export default function MapView({ mode, stationsWithLoad, recommendedSites, vizM
       pitch: 45,
       bearing: 0
     });
-    
-    const overlay = new MapboxOverlay({
-      interleaved: true,
-      layers: []
-    });
-    
-    map.addControl(overlay);
+
     mapRef.current = map;
-    overlayRef.current = overlay;
+
+    map.on('load', () => {
+      const overlay = new MapboxOverlay({
+        interleaved: true,
+        layers: []
+      });
+      
+      map.addControl(overlay);
+      overlayRef.current = overlay;
+      setOverlayReady(true);
+    });
 
     return () => {
       map.remove();
@@ -244,7 +249,7 @@ export default function MapView({ mode, stationsWithLoad, recommendedSites, vizM
     if (overlayRef.current) {
       overlayRef.current.setProps({ layers });
     }
-  }, [layers]);
+  }, [layers, overlayReady]);
 
   const handleStationClick = (station) => {
     if (mapRef.current) {
