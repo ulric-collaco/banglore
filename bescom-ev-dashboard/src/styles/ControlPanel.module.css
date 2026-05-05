@@ -13,6 +13,23 @@
   overflow: hidden;
 }
 
+.collapsed {
+  height: 56px;
+}
+
+.collapseHandle {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  z-index: 30;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid #334155;
+  color: #f8fafc;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
 .sparklineSection {
   padding: 12px 24px 0;
   flex: 1;

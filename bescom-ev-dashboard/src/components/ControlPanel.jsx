@@ -1,4 +1,5 @@
 
+import { useState } from 'react';
 import { formatHour } from '../hooks/useLoadData';
 import styles from '../styles/ControlPanel.module.css';
 
@@ -13,6 +14,7 @@ export default function ControlPanel({
   dispatchPlanner,
   plannerStats
 }) {
+  const [collapsed, setCollapsed] = useState(false);
   if (mode !== 0) {
     return (
       <section className={styles.panel}>
@@ -74,7 +76,14 @@ export default function ControlPanel({
   })();
 
   return (
-    <section className={styles.panel}>
+    <section className={`${styles.panel} ${collapsed ? styles.collapsed : ''}`}>
+      <button
+        className={styles.collapseHandle}
+        aria-label={collapsed ? 'Expand panel' : 'Collapse panel'}
+        onClick={() => setCollapsed((v) => !v)}
+      >
+        {collapsed ? '▲' : '▼'}
+      </button>
       <div className={styles.sparklineSection}>
         <div className={styles.sparklineHeader}>
           <span>Network Load (24h)</span>
