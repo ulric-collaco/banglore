@@ -4,6 +4,28 @@ import { formatHour } from '../hooks/useLoadData';
 import LoadBadge from './LoadBadge';
 import styles from '../styles/ControlPanel.module.css';
 
+const FACTOR_LABELS = {
+  ev_density_score: 'EV Density',
+  gap_score: 'Gap',
+  grid_headroom_score: 'Grid',
+  population_density_score: 'Population',
+  road_connectivity_score: 'Roads'
+};
+
+function FactorBar({ label, value }) {
+  const pct = Math.round(value * 100);
+  const color = value >= 0.75 ? '#22c55e' : value >= 0.45 ? '#eab308' : '#ef4444';
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '3px' }}>
+      <span style={{ width: '62px', fontSize: '10px', color: '#94a3b8', textAlign: 'right' }}>{label}</span>
+      <div style={{ flex: 1, height: '5px', borderRadius: '999px', background: 'rgba(148,163,184,0.18)' }}>
+        <div style={{ height: '100%', width: `${pct}%`, borderRadius: '999px', background: color, transition: 'width 0.4s' }} />
+      </div>
+      <span style={{ width: '28px', fontSize: '10px', color: '#cbd5e1', fontFamily: "'JetBrains Mono', monospace" }}>{pct}%</span>
+    </div>
+  );
+}
+
 export default function ControlPanel({
   mode,
   hour,
@@ -26,6 +48,7 @@ export default function ControlPanel({
   buildoutStats = null
 }) {
   const [collapsed, setCollapsed] = useState(false);
+  const [expandedCandidate, setExpandedCandidate] = useState(null);
   const [sliderValue, setSliderValue] = useState(hour);
 
   useEffect(() => {
@@ -35,7 +58,7 @@ export default function ControlPanel({
   if (mode !== 0) {
     const hasSelection = selectedCandidates.length > 0;
     return (
-      <section className={`${styles.panel} ${styles.plannerPanel}`}>
+      <section className={`${styles.panel} ${styles.plannerPanel} ${hasSelection ? styles.plannerPanelExpanded : ''}`}>
         <div className={styles.statsRow}>
           <LoadBadge label="Selected Sites" value={impactStats.selected} tone={hasSelection ? 'default' : 'muted'} />
           <LoadBadge label="Added Capacity" value={`${impactStats.addedCapacity} kW`} />
@@ -62,6 +85,44 @@ export default function ControlPanel({
             </button>
           )}
         </div>
+
+        {/* Expanded candidate detail cards */}
+        {hasSelection && (
+          <div className={styles.candidateCards}>
+            {selectedCandidates.map((site) => (
+              <div
+                key={site.id}
+                className={`${styles.candidateCard} ${expandedCandidate === site.id ? styles.candidateExpanded : ''}`}
+                onClick={() => setExpandedCandidate(expandedCandidate === site.id ? null : site.id)}
+              >
+                <div className={styles.candidateHeader}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span className={`${styles.priorityDot} ${styles[`priority_${site.priority}`]}`} />
+                    <strong>{site.zone}</strong>
+                    <span className={styles.scoreChip}>{site.demand_score}/100</span>
+                  </div>
+                  <span style={{ fontSize: '10px', color: '#64748b' }}>{expandedCandidate === site.id ? '▲' : '▼'}</span>
+                </div>
+                {expandedCandidate === site.id && (
+                  <div className={styles.candidateDetail}>
+                    <p className={styles.candidateReason}>{site.reason}</p>
+                    <div style={{ marginTop: '8px' }}>
+                      {Object.entries(FACTOR_LABELS).map(([key, label]) => (
+                        <FactorBar key={key} label={label} value={site[key] ?? 0} />
+                      ))}
+                    </div>
+                    <div className={styles.candidateMeta}>
+                      <span>{site.recommended_capacity_kw} kW capacity</span>
+                      <span>{site.projected_daily_sessions} sessions/day</span>
+                      <span>{site.factors.grid_headroom_mw} MW headroom</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+
         <div className={styles.plannerControls}>
           <div className={styles.filterGroup} aria-label="Priority filter">
             {['all', 'high', 'medium', 'low'].map((priority) => (

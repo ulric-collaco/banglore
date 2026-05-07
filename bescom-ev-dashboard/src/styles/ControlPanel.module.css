@@ -24,6 +24,105 @@
   height: 176px;
 }
 
+.plannerPanelExpanded {
+  height: auto;
+  max-height: 420px;
+  overflow-y: auto;
+}
+
+.candidateCards {
+  display: flex;
+  gap: 6px;
+  padding: 8px 14px;
+  overflow-x: auto;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+  background: rgba(15, 23, 42, 0.56);
+}
+
+.candidateCard {
+  min-width: 240px;
+  max-width: 300px;
+  flex-shrink: 0;
+  padding: 10px 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 8px;
+  background: rgba(10, 18, 32, 0.82);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.candidateCard:hover {
+  border-color: rgba(134, 239, 172, 0.32);
+  background: rgba(22, 163, 74, 0.08);
+}
+
+.candidateExpanded {
+  min-width: 300px;
+  border-color: rgba(134, 239, 172, 0.42);
+  background: rgba(22, 163, 74, 0.1);
+}
+
+.candidateHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.candidateHeader strong {
+  color: #f8fafc;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.priorityDot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.priority_high { background: #ea580c; }
+.priority_medium { background: #eab308; }
+.priority_low { background: #a3e635; }
+
+.scoreChip {
+  padding: 1px 6px;
+  border-radius: 4px;
+  background: rgba(249, 115, 22, 0.18);
+  color: #fdba74;
+  font: 700 10px 'JetBrains Mono', monospace;
+}
+
+.candidateDetail {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.candidateReason {
+  margin: 0 0 6px;
+  color: #94a3b8;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.candidateMeta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.candidateMeta span {
+  display: inline-block;
+  padding: 2px 6px;
+  border-radius: 4px;
+  background: rgba(15, 23, 42, 0.72);
+  border: 1px solid rgba(148, 163, 184, 0.12);
+  color: #cbd5e1;
+  font: 600 10px 'JetBrains Mono', monospace;
+}
+
 .collapseHandle {
   position: absolute;
   top: 10px;

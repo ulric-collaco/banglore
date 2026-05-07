@@ -2,6 +2,8 @@ import { useMemo } from 'react';
 import { kMeans } from '../algorithms/kmeans';
 import { polynomialRegression } from '../algorithms/regression';
 import { scoreAllCandidates } from '../algorithms/scoring';
+import { compareStrategies } from '../algorithms/baseline';
+import { generateStationSchedules, networkSchedulingSummary } from '../algorithms/scheduling';
 
 const HOURS = Array.from({ length: 24 }, (_, hour) => hour);
 const LABELS = [
@@ -47,6 +49,24 @@ export function useAlgorithms(stations, loadProfiles, recommendedLocations) {
     }, 0);
 
     const scoringResults = scoreAllCandidates(recommendedLocations);
-    return { k, kmeansResult, clusterMeta, regressionResults, featuredStationIndex, scoringResults };
+
+    // Baseline comparison: AI-optimized vs uniform placement
+    const baselineComparison = compareStrategies(stations, scoringResults, loadProfiles);
+
+    // Per-station scheduling recommendations
+    const stationSchedules = generateStationSchedules(stations, loadProfiles);
+    const schedulingSummary = networkSchedulingSummary(stationSchedules);
+
+    return {
+      k,
+      kmeansResult,
+      clusterMeta,
+      regressionResults,
+      featuredStationIndex,
+      scoringResults,
+      baselineComparison,
+      stationSchedules,
+      schedulingSummary
+    };
   }, [stations, loadProfiles, recommendedLocations]);
 }
