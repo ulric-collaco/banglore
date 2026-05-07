@@ -1,6 +1,7 @@
 
 import { useState } from 'react';
 import { formatHour } from '../hooks/useLoadData';
+import LoadBadge from './LoadBadge';
 import styles from '../styles/ControlPanel.module.css';
 
 export default function ControlPanel({
@@ -12,19 +13,52 @@ export default function ControlPanel({
   loadStats,
   plannerState,
   dispatchPlanner,
-  plannerStats
+  plannerStats,
+  selectedCandidates = [],
+  impactStats = {
+    selected: 0,
+    addedCapacity: 0,
+    projectedSessions: 0,
+    avgGapAddressed: 0,
+    peakReliefKw: 0,
+    queueReliefMinutes: 0
+  },
+  onClearCandidates,
+  comparisonView = 'before',
+  buildoutStats = null
 }) {
   const [collapsed, setCollapsed] = useState(false);
   if (mode !== 0) {
+    const hasSelection = selectedCandidates.length > 0;
     return (
-      <section className={styles.panel}>
+      <section className={`${styles.panel} ${styles.plannerPanel}`}>
         <div className={styles.statsRow}>
-          <LoadBadge label="Recommended Sites" value={plannerStats.total} />
-          <LoadBadge label="High Priority" value={plannerStats.high} tone={plannerStats.high ? 'critical' : 'default'} />
-          <LoadBadge label="Projected Sessions" value={plannerStats.sessions} />
-          <LoadBadge label="Avg Demand Score" value={Math.round(plannerStats.avgScore)} />
+          <LoadBadge label="Selected Sites" value={impactStats.selected} tone={hasSelection ? 'default' : 'muted'} />
+          <LoadBadge label="Added Capacity" value={`${impactStats.addedCapacity} kW`} />
+          <LoadBadge label="Daily Sessions" value={impactStats.projectedSessions} />
+          <LoadBadge label="Peak Relief" value={`${impactStats.peakReliefKw} kW`} />
         </div>
-        <div style={{ padding: '16px 24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className={styles.impactStrip}>
+          <div>
+            <span className={styles.impactEyebrow}>Candidate Impact Preview</span>
+            <strong>
+              {hasSelection
+                ? `${selectedCandidates.map((site) => site.zone).join(', ')}`
+                : 'Click candidate sites on the map to preview coverage and relief'}
+            </strong>
+          </div>
+          <div className={styles.impactMetrics}>
+            <span>{impactStats.avgGapAddressed.toFixed(1)} km avg gap</span>
+            <span>{impactStats.queueReliefMinutes} min queue relief</span>
+            <span>{plannerStats.total} ranked sites</span>
+          </div>
+          {hasSelection && (
+            <button className={styles.clearButton} onClick={onClearCandidates}>
+              Clear
+            </button>
+          )}
+        </div>
+        <div className={styles.plannerControls}>
           <div className={styles.filterGroup} aria-label="Priority filter">
             {['all', 'high', 'medium', 'low'].map((priority) => (
               <button
@@ -82,12 +116,16 @@ export default function ControlPanel({
         aria-label={collapsed ? 'Expand panel' : 'Collapse panel'}
         onClick={() => setCollapsed((v) => !v)}
       >
-        {collapsed ? '▲' : '▼'}
+        {collapsed ? 'Expand' : 'Collapse'}
       </button>
       <div className={styles.sparklineSection}>
         <div className={styles.sparklineHeader}>
-          <span>Network Load (24h)</span>
-          <span>Max: {Math.round(maxTotalLoad)} kW</span>
+          <span>{comparisonView === 'after' ? 'After Buildout Load (24h)' : 'Current Network Load (24h)'}</span>
+          <span>
+            {buildoutStats && comparisonView === 'after'
+              ? `After: ${buildoutStats.totalAfterKw.toLocaleString()} kW`
+              : `Now: ${Math.round(loadStats.totalKwInUse).toLocaleString()} kW`}
+          </span>
         </div>
         
         <div className={styles.sparklineCursorLabel} style={{ left: `${cursorX}%` }}>
@@ -136,7 +174,7 @@ export default function ControlPanel({
 
       <div className={styles.sliderRow}>
         <button className={styles.playButton} onClick={() => setIsPlaying(!isPlaying)}>
-          {isPlaying ? 'Ⅱ' : '▶'}
+          {isPlaying ? 'Pause' : 'Play'}
         </button>
         <div className={styles.sliderContainer}>
           <div className={styles.sliderWrap}>
@@ -159,54 +197,77 @@ export default function ControlPanel({
         </div>
       </div>
 
-      <div className={styles.statsRow}>
-        <div className={styles.statCard}>
-          <div className={styles.labelGroup}>
-            <span>Critical Load</span>
-            {loadStats.loadTrend.criticalCount !== 0 && (
-              <TrendArrow value={loadStats.loadTrend.criticalCount} />
-            )}
+      {buildoutStats ? (
+        <div className={styles.statsRow}>
+          <div className={styles.statCard}>
+            <span>Before Critical</span>
+            <strong className={buildoutStats.beforeCritical > 0 ? styles.criticalValue : ''}>
+              {buildoutStats.beforeCritical}
+            </strong>
           </div>
-          <strong className={loadStats.criticalCount > 0 ? styles.criticalValue : ''}>
-            {loadStats.criticalCount}
-          </strong>
-          <TrendText value={loadStats.loadTrend.criticalCount} suffix="" />
-        </div>
-
-        <div className={styles.statCard}>
-          <div className={styles.labelGroup}>
-            <span>Avg Network Load</span>
-            {Math.abs(loadStats.loadTrend.avgNetworkLoad) > 0.1 && (
-              <TrendArrow value={loadStats.loadTrend.avgNetworkLoad} />
-            )}
+          <div className={styles.statCard}>
+            <span>After Critical</span>
+            <strong>{buildoutStats.afterCritical}</strong>
           </div>
-          <strong>{Math.round(loadStats.avgNetworkLoad)}%</strong>
-          <TrendText value={loadStats.loadTrend.avgNetworkLoad} suffix="%" />
-        </div>
-
-        <div className={styles.statCard}>
-          <div className={styles.labelGroup}>
-            <span>Total kW in Use</span>
-            {Math.abs(loadStats.loadTrend.totalKwInUse) > 1 && (
-              <TrendArrow value={loadStats.loadTrend.totalKwInUse} />
-            )}
+          <div className={styles.statCard}>
+            <span>Existing Load Relief</span>
+            <strong>{buildoutStats.relievedKw.toLocaleString()} kW</strong>
           </div>
-          <strong>{Math.round(loadStats.totalKwInUse).toLocaleString()} kW</strong>
-          <TrendText value={loadStats.loadTrend.totalKwInUse} suffix=" kW" />
+          <div className={styles.statCard}>
+            <span>Planned Hub Load</span>
+            <strong>{buildoutStats.plannedKw.toLocaleString()} kW</strong>
+          </div>
         </div>
+      ) : (
+        <div className={styles.statsRow}>
+          <div className={styles.statCard}>
+            <div className={styles.labelGroup}>
+              <span>Critical Load</span>
+              {loadStats.loadTrend.criticalCount !== 0 && (
+                <TrendArrow value={loadStats.loadTrend.criticalCount} />
+              )}
+            </div>
+            <strong className={loadStats.criticalCount > 0 ? styles.criticalValue : ''}>
+              {loadStats.criticalCount}
+            </strong>
+            <TrendText value={loadStats.loadTrend.criticalCount} suffix="" />
+          </div>
 
-        <div className={styles.statCard}>
-          <span>Off-Peak Window</span>
-          <strong>{loadStats.offPeakWindow}</strong>
+          <div className={styles.statCard}>
+            <div className={styles.labelGroup}>
+              <span>Avg Network Load</span>
+              {Math.abs(loadStats.loadTrend.avgNetworkLoad) > 0.1 && (
+                <TrendArrow value={loadStats.loadTrend.avgNetworkLoad} />
+              )}
+            </div>
+            <strong>{Math.round(loadStats.avgNetworkLoad)}%</strong>
+            <TrendText value={loadStats.loadTrend.avgNetworkLoad} suffix="%" />
+          </div>
+
+          <div className={styles.statCard}>
+            <div className={styles.labelGroup}>
+              <span>Total kW in Use</span>
+              {Math.abs(loadStats.loadTrend.totalKwInUse) > 1 && (
+                <TrendArrow value={loadStats.loadTrend.totalKwInUse} />
+              )}
+            </div>
+            <strong>{Math.round(loadStats.totalKwInUse).toLocaleString()} kW</strong>
+            <TrendText value={loadStats.loadTrend.totalKwInUse} suffix=" kW" />
+          </div>
+
+          <div className={styles.statCard}>
+            <span>Off-Peak Window</span>
+            <strong>{loadStats.offPeakWindow}</strong>
+          </div>
         </div>
-      </div>
+      )}
     </section>
   );
 }
 
 function TrendArrow({ value }) {
   const color = value > 0 ? '#ef4444' : '#22c55e';
-  return <span style={{ color, fontSize: '12px', margin: 0 }}>{value > 0 ? '↑' : '↓'}</span>;
+  return <span style={{ color, fontSize: '12px', margin: 0 }}>{value > 0 ? '+' : '-'}</span>;
 }
 
 function TrendText({ value, suffix }) {

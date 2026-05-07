@@ -52,7 +52,7 @@ export async function createRealisticTrafficPath(start, end) {
     // Find closest road segment midpoints
     const roadWaypoints = roads.slice(0, Math.min(2, roads.length)).flatMap(r => r.slice(Math.floor(r.length / 2), Math.floor(r.length / 2) + 1));
     
-    // Create path: start → nearest road → end
+    // Create path through the nearest available road waypoints.
     const path = [start];
     if (roadWaypoints.length > 0) {
       path.push(...roadWaypoints.slice(0, 2));

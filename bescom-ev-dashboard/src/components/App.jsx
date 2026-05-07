@@ -2,6 +2,7 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import { CHARGING_STATIONS, HOURLY_LOAD_PROFILES, RECOMMENDED_LOCATIONS } from '../data/bangalore_ev_data';
 import { useAlgorithms } from '../hooks/useAlgorithms';
 import { useLoadData } from '../hooks/useLoadData';
+import { summarizeBuildoutImpact } from '../utils/buildoutImpact';
 import TopBar from './TopBar';
 import MapView from './MapView';
 import ControlPanel from './ControlPanel';
@@ -22,6 +23,8 @@ export default function App() {
   const [panelOpen, setPanelOpen] = useState(false);
   const [hour, setHour] = useState(18);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [comparisonView, setComparisonView] = useState('before');
+  const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
   const [plannerState, dispatchPlanner] = useReducer(plannerReducer, initialPlannerState);
   const loadData = useLoadData(CHARGING_STATIONS, HOURLY_LOAD_PROFILES, hour);
   const algorithms = useAlgorithms(CHARGING_STATIONS, HOURLY_LOAD_PROFILES, RECOMMENDED_LOCATIONS);
@@ -46,6 +49,39 @@ export default function App() {
     avgScore: plannerSites.reduce((sum, site) => sum + site.demand_score, 0) / Math.max(1, plannerSites.length)
   }), [plannerSites]);
 
+  const selectedCandidates = useMemo(() => {
+    const selectedIds = new Set(selectedCandidateIds);
+    return algorithms.scoringResults.filter((site) => selectedIds.has(site.id));
+  }, [algorithms.scoringResults, selectedCandidateIds]);
+
+  const impactStats = useMemo(() => {
+    const addedCapacity = selectedCandidates.reduce((sum, site) => sum + site.recommended_capacity_kw, 0);
+    const projectedSessions = selectedCandidates.reduce((sum, site) => sum + site.projected_daily_sessions, 0);
+    const weightedGap = selectedCandidates.reduce((sum, site) => sum + site.factors.gap_km * site.projected_daily_sessions, 0);
+    const avgGapAddressed = weightedGap / Math.max(1, projectedSessions);
+    const peakReliefKw = Math.round(addedCapacity * 0.54);
+    const queueReliefMinutes = Math.min(32, Math.round(projectedSessions / 24));
+    return {
+      selected: selectedCandidates.length,
+      addedCapacity,
+      projectedSessions,
+      avgGapAddressed,
+      peakReliefKw,
+      queueReliefMinutes
+    };
+  }, [selectedCandidates]);
+
+  const buildoutStats = useMemo(
+    () => summarizeBuildoutImpact(loadData.stationsWithLoad, algorithms.scoringResults, hour),
+    [loadData.stationsWithLoad, algorithms.scoringResults, hour]
+  );
+
+  const toggleCandidate = (site) => {
+    setSelectedCandidateIds((ids) => (
+      ids.includes(site.id) ? ids.filter((id) => id !== site.id) : [...ids, site.id]
+    ));
+  };
+
   return (
     <div className="appShell">
       <TopBar mode={mode} onModeChange={setMode} stationCount={CHARGING_STATIONS.length} />
@@ -59,7 +95,24 @@ export default function App() {
             hour={hour}
             panelOpen={panelOpen}
             setPanelOpen={setPanelOpen}
+            selectedCandidateIds={selectedCandidateIds}
+            onCandidateToggle={toggleCandidate}
+            comparisonView={comparisonView}
+            plannedBuildoutSites={algorithms.scoringResults}
           />
+          {mode === 0 && vizMode === 'heatmap' && (
+            <div className="comparisonSwitcher" aria-label="Buildout comparison">
+              {['before', 'after'].map((view) => (
+                <button
+                  key={view}
+                  className={comparisonView === view ? 'active' : ''}
+                  onClick={() => setComparisonView(view)}
+                >
+                  {view === 'before' ? 'Before' : 'After Buildout'}
+                </button>
+              ))}
+            </div>
+          )}
           <div className={`vizSwitcher ${panelOpen ? 'panelOpen' : ''}`}>
             {['heatmap', 'hex', 'coverage'].map(m => (
               <button 
@@ -71,7 +124,7 @@ export default function App() {
               </button>
             ))}
           </div>
-          <LegendPanel mode={mode} vizMode={vizMode} />
+          <LegendPanel mode={mode} vizMode={vizMode} comparisonView={comparisonView} />
           {mode < 2 && (
             <ControlPanel
               mode={mode}
@@ -83,6 +136,11 @@ export default function App() {
               plannerState={plannerState}
               dispatchPlanner={dispatchPlanner}
               plannerStats={plannerStats}
+              selectedCandidates={selectedCandidates}
+              impactStats={impactStats}
+              onClearCandidates={() => setSelectedCandidateIds([])}
+              comparisonView={comparisonView}
+              buildoutStats={buildoutStats}
             />
           )}
         </div>

@@ -7,15 +7,15 @@ export default function LoadBadge({ label, value, tone = 'default', trendValue =
 
   if (trendValue !== null) {
     if (Math.abs(trendValue) < (trendSuffix === '%' ? 2 : 0.1)) {
-      indicator = '→';
+      indicator = '0';
       trendColor = '#94a3b8'; // gray
       trendText = 'stable';
     } else if (trendValue > 0) {
-      indicator = '↑';
+      indicator = '+';
       trendColor = '#f97316'; // orange/red
       trendText = `+${Math.round(trendValue)}${trendSuffix} from last hour`;
     } else {
-      indicator = '↓';
+      indicator = '-';
       trendColor = '#22c55e'; // green
       trendText = `${Math.round(trendValue)}${trendSuffix} from last hour`;
     }

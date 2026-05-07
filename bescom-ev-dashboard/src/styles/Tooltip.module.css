@@ -6,7 +6,7 @@
   pointer-events: none;
   background: rgba(15, 23, 42, 0.95);
   border: 1px solid #1e293b;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
   backdrop-filter: blur(8px);
   animation: enter 150ms ease;

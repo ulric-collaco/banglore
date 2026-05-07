@@ -82,7 +82,7 @@ export function kMeans(points, k = 6, maxIter = 100) {
     original: point
   }));
 
-  // K-Means++ seeds centroids by D² probability to avoid poor initial clusters.
+  // K-Means++ seeds centroids by squared-distance probability to avoid poor initial clusters.
   let centroids = initializeCentroids(normalizedPoints, k);
   let assignments = assignClusters(normalizedPoints, centroids);
   let iterations = 0;

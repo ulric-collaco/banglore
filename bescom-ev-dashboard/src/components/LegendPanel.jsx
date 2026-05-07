@@ -14,28 +14,32 @@ const PRIORITY = [
   ['#a3e635', 'Low priority', 'Future coverage reserve']
 ];
 
-export default function LegendPanel({ mode, vizMode }) {
+export default function LegendPanel({ mode, vizMode, comparisonView = 'before' }) {
   if (mode === 2) return null;
   
   if (mode === 0) {
     if (vizMode === 'heatmap') {
       return (
         <aside className={styles.legend}>
-          <h2>Demand Intensity</h2>
+          <h2>{comparisonView === 'after' ? 'After Buildout' : 'Before Buildout'}</h2>
           <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '12px' }}>
             <div style={{ 
-              height: '8px', 
+              height: '10px', 
               width: '100%', 
-              background: 'linear-gradient(to right, #22c55e, #eab308, #ef4444)',
-              borderRadius: '4px'
+              background: 'linear-gradient(to right, rgba(34,197,94,0.45), #22c55e, #eab308, #f97316, #ef4444)',
+              borderRadius: '999px'
             }} />
             <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', color: 'var(--color-text-muted)' }}>
-              <span>Low</span>
-              <span>Moderate</span>
-              <span>High</span>
-              <span>Critical</span>
+              <span>Relief</span>
+              <span>Demand</span>
+              <span>Stress</span>
             </div>
           </div>
+          <p style={{ marginTop: '12px', fontSize: '11px', color: 'var(--color-text-muted)' }}>
+            {comparisonView === 'after'
+              ? 'Recommended stations are added and nearby existing load is relieved.'
+              : 'Current network pressure before adding recommended stations.'}
+          </p>
         </aside>
       );
     }
@@ -85,7 +89,7 @@ export default function LegendPanel({ mode, vizMode }) {
           <em>{range}</em>
         </div>
       ))}
-      <p style={{ marginTop: '12px', fontSize: '11px', color: 'var(--color-text-muted)' }}>White arcs connect candidate sites to the two nearest existing stations.</p>
+      <p style={{ marginTop: '12px', fontSize: '11px', color: 'var(--color-text-muted)' }}>Click candidates to preview added coverage and station relief.</p>
     </aside>
   );
 }
