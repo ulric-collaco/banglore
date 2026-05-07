@@ -145,8 +145,14 @@ export default function MapView({
     if (mode !== 0 || vizMode !== 'hex') return [];
     const cellMap = new Map();
     
-    stationsWithLoad.forEach(station => {
-      const hexId = latLngToCell(station.lat, station.lng, 7);
+    // Use the after stations to show the hex relief if in after mode
+    const sourceStations = comparisonView === 'after'
+      ? createAfterBuildStations(stationsWithLoad, plannedBuildoutSites, hour)
+      : stationsWithLoad;
+      
+    sourceStations.forEach(station => {
+      if (station.status === 'planned') return; // Don't add planned to hex density either
+      const hexId = latLngToCell(station.lat, station.lng, 9); // Increased resolution
       if (!cellMap.has(hexId)) cellMap.set(hexId, { hex: hexId, loadSum: 0, count: 0 });
       const cell = cellMap.get(hexId);
       cell.loadSum += station.load_factor;
@@ -157,18 +163,20 @@ export default function MapView({
       hex: cell.hex,
       avgLoad: cell.loadSum / cell.count
     }));
-  }, [stationsWithLoad, vizMode, mode]);
+  }, [stationsWithLoad, vizMode, mode, comparisonView, plannedBuildoutSites, hour]);
 
   const heatmapData = useMemo(() => {
     if (mode !== 0 || vizMode !== 'heatmap') return [];
-    const sourceStations = comparisonView === 'after'
-      ? createAfterBuildStations(stationsWithLoad, plannedBuildoutSites, hour)
-      : stationsWithLoad;
+    let sourceStations = stationsWithLoad;
+    if (comparisonView === 'after') {
+      sourceStations = createAfterBuildStations(stationsWithLoad, plannedBuildoutSites, hour)
+        .filter(station => station.status !== 'planned');
+    }
     return sourceStations.flatMap(stationDemandFootprint);
   }, [mode, vizMode, stationsWithLoad, comparisonView, plannedBuildoutSites, hour]);
 
   const mapStations = useMemo(() => {
-    if (mode === 0 && vizMode === 'heatmap' && comparisonView === 'after') {
+    if (mode === 0 && comparisonView === 'after') {
       return createAfterBuildStations(stationsWithLoad, plannedBuildoutSites, hour);
     }
     return stationsWithLoad;
@@ -207,7 +215,7 @@ export default function MapView({
             wireframe: false,
             filled: true,
             extruded: true,
-            elevationScale: 380,
+            elevationScale: 2000,
             getHexagon: d => d.hex,
             getFillColor: d => [...loadColor(d.avgLoad), 185],
             getElevation: d => d.avgLoad * 10,
@@ -217,49 +225,38 @@ export default function MapView({
             }
           })
         );
-      } else if (vizMode === 'coverage') {
+      }
+
+      if (comparisonView === 'after') {
+        // Glow halo for newly planned stations
         mapLayers.push(
           new ScatterplotLayer({
-            id: 'coverage-areas',
-            data: CHARGING_STATIONS,
+            id: 'planned-stations-halo',
+            data: mapStations.filter(s => s.status === 'planned'),
             pickable: false,
-            opacity: 0.2,
             stroked: false,
             filled: true,
-            radiusMinPixels: 1,
             getPosition: (station) => [station.lng, station.lat],
-            getRadius: 3000,
-            getFillColor: (station) => {
-              const load_factor = profileByStation.get(station.id)?.[hour] ?? 0;
-              return loadColor(load_factor);
-            },
-            transitions: {
-              getFillColor: 600,
-              getRadius: 600
-            },
+            getRadius: 500,
+            getFillColor: [20, 184, 166, 120],
             updateTriggers: {
               getFillColor: [hour]
             }
-          }),
+          })
+        );
+
+        // Ghost outline showing original load for relieved stations
+        mapLayers.push(
           new ScatterplotLayer({
-            id: 'coverage-points',
-            data: CHARGING_STATIONS,
+            id: 'relieved-stations-ghost',
+            data: mapStations.filter(s => s.status !== 'planned' && s.buildout_relief > 0.02),
             pickable: false,
-            opacity: 1,
             stroked: true,
-            filled: true,
-            lineWidthMinPixels: 2,
-            radiusMinPixels: 4,
+            filled: false,
+            lineWidthMinPixels: 4,
             getPosition: (station) => [station.lng, station.lat],
-            getRadius: 50,
-            getFillColor: [255, 255, 255],
-            getLineColor: (station) => {
-              const load_factor = profileByStation.get(station.id)?.[hour] ?? 0;
-              return loadColor(load_factor);
-            },
-            transitions: {
-              getLineColor: 600
-            },
+            getRadius: 105, // larger outline representing old high load
+            getLineColor: (station) => [...loadColor(station.original_load), 220],
             updateTriggers: {
               getLineColor: [hour]
             }
@@ -267,35 +264,38 @@ export default function MapView({
         );
       }
 
-      if (vizMode !== 'coverage') {
-        mapLayers.push(
-          new ScatterplotLayer({
-            id: 'load-station-points',
-            data: mapStations,
-            pickable: true,
-            stroked: true,
-            filled: true,
-            lineWidthMinPixels: 2,
-            radiusMinPixels: 4,
-            getPosition: (station) => [station.lng, station.lat],
-            getRadius: (station) => station.status === 'planned'
-              ? 86
-              : (station.id === selectedStationId ? 95 : 62),
-            getFillColor: (station) => station.status === 'planned'
-              ? [20, 184, 166, 235]
-              : [...loadColor(station.load_factor), station.id === selectedStationId ? 255 : 230],
-            getLineColor: (station) => station.status === 'planned'
-              ? [5, 46, 22, 255]
-              : (station.id === selectedStationId ? [15, 23, 42, 255] : [255, 255, 255, 230]),
-            onHover: setHover,
-            updateTriggers: {
-              getRadius: [selectedStationId],
-              getFillColor: [hour, selectedStationId, comparisonView],
-              getLineColor: [selectedStationId, comparisonView]
-            }
-          })
-        );
-      }
+      mapLayers.push(
+        new ScatterplotLayer({
+          id: 'load-station-points',
+          data: mapStations,
+          pickable: true,
+          stroked: true,
+          filled: true,
+          lineWidthMinPixels: 3,
+          radiusMinPixels: 6,
+          getPosition: (station) => [station.lng, station.lat],
+          getRadius: (station) => {
+            if (station.status === 'planned') return 120;
+            if (comparisonView === 'after' && station.buildout_relief > 0.02) return 75; // visually smaller if relieved
+            return station.id === selectedStationId ? 110 : 85;
+          },
+          getFillColor: (station) => {
+            if (station.status === 'planned') return [13, 148, 136, 255];
+            return [...loadColor(station.load_factor), 255];
+          },
+          getLineColor: (station) => {
+            if (station.status === 'planned') return [15, 23, 42, 255]; // stark dark border to pop out against light map
+            if (comparisonView === 'after' && station.buildout_relief > 0.02) return [21, 128, 61, 255]; // dark green border for relief
+            return station.id === selectedStationId ? [15, 23, 42, 255] : [15, 23, 42, 170]; // dark translucent borders
+          },
+          onHover: setHover,
+          updateTriggers: {
+            getRadius: [selectedStationId, comparisonView, hour],
+            getFillColor: [hour, selectedStationId, comparisonView],
+            getLineColor: [selectedStationId, comparisonView, hour]
+          }
+        })
+      );
       
       // Hidden layer for hover tooltip across all modes
       mapLayers.push(
@@ -336,11 +336,11 @@ export default function MapView({
           id: 'existing-context',
           data: stationsWithLoad,
           getPosition: (station) => [station.lng, station.lat],
-          getRadius: 48,
+          getRadius: 55,
           getFillColor: [71, 85, 105, 165],
-          getLineColor: [255, 255, 255, 210],
+          getLineColor: [15, 23, 42, 180],
           stroked: true,
-          lineWidthMinPixels: 1
+          lineWidthMinPixels: 2
         }),
         new ArcLayer({
           id: 'coverage-arcs',
@@ -371,7 +371,7 @@ export default function MapView({
           getFillColor: (site) => selectedCandidateSet.has(site.id)
             ? [...selectedColor(site.priority), 245]
             : [...priorityColor(site.priority), 225],
-          getLineColor: (site) => selectedCandidateSet.has(site.id) ? [5, 46, 22, 255] : [255, 255, 255, 220],
+          getLineColor: (site) => selectedCandidateSet.has(site.id) ? [5, 46, 22, 255] : [15, 23, 42, 180],
           onHover: setHover,
           onClick: ({ object }) => {
             if (object) onCandidateToggle(object);

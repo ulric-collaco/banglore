@@ -40,7 +40,8 @@ export function createAfterBuildStations(stationsWithLoad, plannedSites, hour) {
       ...station,
       load_factor: loadFactor,
       kw_in_use: loadFactor * station.capacity_kw,
-      buildout_relief: relief
+      buildout_relief: relief,
+      original_load: station.load_factor
     };
   });
 

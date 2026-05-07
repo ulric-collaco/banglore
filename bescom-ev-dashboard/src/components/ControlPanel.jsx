@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { formatHour } from '../hooks/useLoadData';
 import LoadBadge from './LoadBadge';
 import styles from '../styles/ControlPanel.module.css';
@@ -30,8 +30,6 @@ export default function ControlPanel({
   mode,
   hour,
   setHour,
-  isPlaying,
-  setIsPlaying,
   loadStats,
   plannerState,
   dispatchPlanner,
@@ -51,6 +49,11 @@ export default function ControlPanel({
 }) {
   const [collapsed, setCollapsed] = useState(false);
   const [expandedCandidate, setExpandedCandidate] = useState(null);
+  const [sliderValue, setSliderValue] = useState(hour);
+
+  useEffect(() => {
+    setSliderValue(hour);
+  }, [hour]);
 
   if (mode !== 0) {
     const hasSelection = selectedCandidates.length > 0;
@@ -149,7 +152,12 @@ export default function ControlPanel({
   }
 
   const maxTotalLoad = Math.max(...loadStats.hourlyTotalLoad, 1);
-  const cursorX = (hour / 23) * 100;
+  const cursorX = (sliderValue / 23) * 100;
+  
+  const h1 = Math.floor(sliderValue);
+  const h2 = Math.min(23, Math.ceil(sliderValue));
+  const fraction = sliderValue - h1;
+  const interpolatedLoad = loadStats.hourlyTotalLoad[h1] + (loadStats.hourlyTotalLoad[h2] - loadStats.hourlyTotalLoad[h1]) * fraction;
 
   const sparklinePath = (() => {
     const data = loadStats.hourlyTotalLoad;
@@ -217,7 +225,7 @@ export default function ControlPanel({
             x2={cursorX * 10} 
             y1="0" 
             y2="80" 
-            stroke="white" 
+            stroke="#0f172a" 
             strokeWidth="2" 
             strokeDasharray="4 2"
             opacity="0.5"
@@ -225,7 +233,7 @@ export default function ControlPanel({
           
           <circle 
             cx={cursorX * 10} 
-            cy={80 - (loadStats.hourlyTotalLoad[hour] / maxTotalLoad) * 80} 
+            cy={80 - (interpolatedLoad / maxTotalLoad) * 80} 
             r="4" 
             fill="white" 
             stroke="var(--color-bescom-green)" 
@@ -235,18 +243,19 @@ export default function ControlPanel({
       </div>
 
       <div className={styles.sliderRow}>
-        <button className={styles.playButton} onClick={() => setIsPlaying(!isPlaying)}>
-          {isPlaying ? 'Pause' : 'Play'}
-        </button>
         <div className={styles.sliderContainer}>
           <div className={styles.sliderWrap}>
             <input
               type="range"
               min="0"
               max="23"
-              step="1"
-              value={hour}
-              onChange={(e) => setHour(parseInt(e.target.value))}
+              step="0.01"
+              value={sliderValue}
+              onChange={(e) => {
+                const val = parseFloat(e.target.value);
+                setSliderValue(val);
+                setHour(Math.round(val));
+              }}
             />
           </div>
           <div className={styles.sliderLabels}>

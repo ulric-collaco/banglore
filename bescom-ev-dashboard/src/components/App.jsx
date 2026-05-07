@@ -6,7 +6,6 @@ import { summarizeBuildoutImpact } from '../utils/buildoutImpact';
 import TopBar from './TopBar';
 import MapView from './MapView';
 import ControlPanel from './ControlPanel';
-import LegendPanel from './LegendPanel';
 import MethodsPanel from './MethodsPanel/MethodsPanel';
 
 const initialPlannerState = { priority: 'all', sortBy: 'demand_score' };
@@ -22,18 +21,12 @@ export default function App() {
   const [vizMode, setVizMode] = useState('heatmap');
   const [panelOpen, setPanelOpen] = useState(false);
   const [hour, setHour] = useState(18);
-  const [isPlaying, setIsPlaying] = useState(false);
   const [comparisonView, setComparisonView] = useState('before');
   const [selectedCandidateIds, setSelectedCandidateIds] = useState([]);
   const [plannerState, dispatchPlanner] = useReducer(plannerReducer, initialPlannerState);
   const loadData = useLoadData(CHARGING_STATIONS, HOURLY_LOAD_PROFILES, hour);
   const algorithms = useAlgorithms(CHARGING_STATIONS, HOURLY_LOAD_PROFILES, RECOMMENDED_LOCATIONS);
 
-  useEffect(() => {
-    if (!isPlaying || mode !== 0) return undefined;
-    const timer = setInterval(() => setHour((value) => (value + 1) % 24), 800);
-    return () => clearInterval(timer);
-  }, [isPlaying, mode]);
 
   const plannerSites = useMemo(() => {
     const filtered = plannerState.priority === 'all'
@@ -114,24 +107,21 @@ export default function App() {
             </div>
           )}
           <div className={`vizSwitcher ${panelOpen ? 'panelOpen' : ''}`}>
-            {['heatmap', 'hex', 'coverage'].map(m => (
+            {['heatmap', 'hex'].map(m => (
               <button 
                 key={m} 
                 className={vizMode === m ? 'active' : ''} 
                 onClick={() => setVizMode(m)}
               >
-                {m === 'heatmap' ? 'Heatmap' : m === 'hex' ? 'Hex Grid' : 'Coverage'}
+                {m === 'heatmap' ? 'Heatmap' : 'Hex Grid'}
               </button>
             ))}
           </div>
-          <LegendPanel mode={mode} vizMode={vizMode} comparisonView={comparisonView} />
           {mode < 2 && (
             <ControlPanel
               mode={mode}
               hour={hour}
               setHour={setHour}
-              isPlaying={isPlaying}
-              setIsPlaying={setIsPlaying}
               loadStats={loadData}
               plannerState={plannerState}
               dispatchPlanner={dispatchPlanner}

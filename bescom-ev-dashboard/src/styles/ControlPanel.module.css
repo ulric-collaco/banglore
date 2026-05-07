@@ -8,11 +8,12 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  border: 1px solid rgba(148, 163, 184, 0.18);
-  border-radius: 8px;
-  background: rgba(10, 18, 32, 0.9);
-  box-shadow: 0 24px 60px rgba(15, 23, 42, 0.32);
-  backdrop-filter: blur(14px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: var(--shadow-premium);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .collapsed {
@@ -132,8 +133,8 @@
   padding: 4px 10px;
   border: 1px solid rgba(148, 163, 184, 0.24);
   border-radius: 6px;
-  color: #e2e8f0;
-  background: rgba(15, 23, 42, 0.78);
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.9);
   font-size: 11px;
   font-weight: 800;
 }
@@ -153,7 +154,7 @@
 }
 
 .sparklineHeader span {
-  color: #94a3b8;
+  color: #64748b;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -167,7 +168,7 @@
   padding: 2px 6px;
   border: 1px solid rgba(148, 163, 184, 0.26);
   border-radius: 5px;
-  color: #f8fafc;
+  color: #0f172a;
   background: rgba(15, 23, 42, 0.9);
   font: 700 11px 'JetBrains Mono', monospace;
   pointer-events: none;
@@ -213,38 +214,32 @@
 }
 
 .sliderWrap input::-webkit-slider-thumb {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
   appearance: none;
   border: 2px solid #052e16;
   border-radius: 50%;
   background: #86efac;
-  box-shadow: 0 0 0 4px rgba(134, 239, 172, 0.24);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2), 0 0 0 4px rgba(134, 239, 172, 0.24);
+  transition: transform 0.1s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.1s;
 }
 
-.playButton {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 58px;
-  height: 32px;
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  border-radius: 6px;
-  color: #f8fafc;
-  background: rgba(15, 23, 42, 0.78);
-  font-size: 12px;
-  font-weight: 800;
+.sliderWrap input::-webkit-slider-thumb:hover {
+  transform: scale(1.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2), 0 0 0 6px rgba(134, 239, 172, 0.3);
 }
 
-.playButton:hover {
-  background: rgba(148, 163, 184, 0.13);
+.sliderWrap input::-webkit-slider-thumb:active {
+  transform: scale(0.95);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(134, 239, 172, 0.4);
 }
+
 
 .statsRow {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   border-top: 1px solid rgba(148, 163, 184, 0.14);
-  background: rgba(15, 23, 42, 0.62);
+  background: rgba(255, 255, 255, 0.62);
 }
 
 .impactStrip {
@@ -254,14 +249,14 @@
   gap: 18px;
   padding: 12px 18px;
   border-top: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(10, 18, 32, 0.76);
+  background: rgba(255, 255, 255, 0.76);
 }
 
 .impactStrip strong {
   display: block;
   max-width: 760px;
   overflow: hidden;
-  color: #f8fafc;
+  color: #0f172a;
   font-size: 13px;
   font-weight: 800;
   text-overflow: ellipsis;
@@ -291,8 +286,8 @@
   padding: 0 10px;
   border: 1px solid rgba(148, 163, 184, 0.18);
   border-radius: 6px;
-  color: #cbd5e1;
-  background: rgba(15, 23, 42, 0.62);
+  color: #475569;
+  background: rgba(255, 255, 255, 0.62);
   font: 700 11px 'JetBrains Mono', monospace;
 }
 
@@ -329,7 +324,7 @@
 .statCard span {
   display: block;
   margin-bottom: 4px;
-  color: #94a3b8;
+  color: #64748b;
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -339,7 +334,7 @@
 .statCard strong {
   display: block;
   overflow: hidden;
-  color: #f8fafc;
+  color: #0f172a;
   font: 700 17px 'JetBrains Mono', monospace;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -365,8 +360,8 @@
   min-height: 34px;
   border: 1px solid rgba(148, 163, 184, 0.24);
   border-radius: 6px;
-  color: #cbd5e1;
-  background: rgba(15, 23, 42, 0.72);
+  color: #475569;
+  background: rgba(255, 255, 255, 0.9);
   font-size: 12px;
   font-weight: 800;
 }
@@ -384,7 +379,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #94a3b8;
+  color: #64748b;
   font-size: 11px;
   font-weight: 800;
   text-transform: uppercase;
