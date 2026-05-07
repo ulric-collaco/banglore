@@ -237,8 +237,8 @@ export default function MapView({
             stroked: false,
             filled: true,
             getPosition: (station) => [station.lng, station.lat],
-            getRadius: 350,
-            getFillColor: [20, 184, 166, 50],
+            getRadius: 500,
+            getFillColor: [20, 184, 166, 120],
             updateTriggers: {
               getFillColor: [hour]
             }
@@ -253,10 +253,10 @@ export default function MapView({
             pickable: false,
             stroked: true,
             filled: false,
-            lineWidthMinPixels: 2,
+            lineWidthMinPixels: 4,
             getPosition: (station) => [station.lng, station.lat],
-            getRadius: 85, // larger outline representing old high load
-            getLineColor: (station) => [...loadColor(station.original_load), 200],
+            getRadius: 105, // larger outline representing old high load
+            getLineColor: (station) => [...loadColor(station.original_load), 220],
             updateTriggers: {
               getLineColor: [hour]
             }
@@ -271,22 +271,22 @@ export default function MapView({
           pickable: true,
           stroked: true,
           filled: true,
-          lineWidthMinPixels: 2,
-          radiusMinPixels: 4,
+          lineWidthMinPixels: 3,
+          radiusMinPixels: 6,
           getPosition: (station) => [station.lng, station.lat],
           getRadius: (station) => {
-            if (station.status === 'planned') return 100;
-            if (comparisonView === 'after' && station.buildout_relief > 0.02) return 55; // visually smaller if relieved
-            return station.id === selectedStationId ? 95 : 62;
+            if (station.status === 'planned') return 120;
+            if (comparisonView === 'after' && station.buildout_relief > 0.02) return 75; // visually smaller if relieved
+            return station.id === selectedStationId ? 110 : 85;
           },
           getFillColor: (station) => {
-            if (station.status === 'planned') return [20, 184, 166, 255];
-            return [...loadColor(station.load_factor), station.id === selectedStationId ? 255 : 230];
+            if (station.status === 'planned') return [13, 148, 136, 255];
+            return [...loadColor(station.load_factor), 255];
           },
           getLineColor: (station) => {
-            if (station.status === 'planned') return [255, 255, 255, 255]; // stark white border to pop out
-            if (comparisonView === 'after' && station.buildout_relief > 0.02) return [34, 197, 94, 255]; // green border for relief
-            return station.id === selectedStationId ? [15, 23, 42, 255] : [255, 255, 255, 230];
+            if (station.status === 'planned') return [15, 23, 42, 255]; // stark dark border to pop out against light map
+            if (comparisonView === 'after' && station.buildout_relief > 0.02) return [21, 128, 61, 255]; // dark green border for relief
+            return station.id === selectedStationId ? [15, 23, 42, 255] : [15, 23, 42, 170]; // dark translucent borders
           },
           onHover: setHover,
           updateTriggers: {
@@ -336,11 +336,11 @@ export default function MapView({
           id: 'existing-context',
           data: stationsWithLoad,
           getPosition: (station) => [station.lng, station.lat],
-          getRadius: 48,
+          getRadius: 55,
           getFillColor: [71, 85, 105, 165],
-          getLineColor: [255, 255, 255, 210],
+          getLineColor: [15, 23, 42, 180],
           stroked: true,
-          lineWidthMinPixels: 1
+          lineWidthMinPixels: 2
         }),
         new ArcLayer({
           id: 'coverage-arcs',
@@ -371,7 +371,7 @@ export default function MapView({
           getFillColor: (site) => selectedCandidateSet.has(site.id)
             ? [...selectedColor(site.priority), 245]
             : [...priorityColor(site.priority), 225],
-          getLineColor: (site) => selectedCandidateSet.has(site.id) ? [5, 46, 22, 255] : [255, 255, 255, 220],
+          getLineColor: (site) => selectedCandidateSet.has(site.id) ? [5, 46, 22, 255] : [15, 23, 42, 180],
           onHover: setHover,
           onClick: ({ object }) => {
             if (object) onCandidateToggle(object);

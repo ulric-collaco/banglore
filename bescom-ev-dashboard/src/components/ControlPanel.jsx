@@ -164,7 +164,7 @@ export default function ControlPanel({
             x2={cursorX * 10} 
             y1="0" 
             y2="80" 
-            stroke="white" 
+            stroke="#0f172a" 
             strokeWidth="2" 
             strokeDasharray="4 2"
             opacity="0.5"
