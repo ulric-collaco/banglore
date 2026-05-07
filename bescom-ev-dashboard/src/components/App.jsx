@@ -114,13 +114,13 @@ export default function App() {
             </div>
           )}
           <div className={`vizSwitcher ${panelOpen ? 'panelOpen' : ''}`}>
-            {['heatmap', 'hex', 'coverage'].map(m => (
+            {['heatmap', 'hex'].map(m => (
               <button 
                 key={m} 
                 className={vizMode === m ? 'active' : ''} 
                 onClick={() => setVizMode(m)}
               >
-                {m === 'heatmap' ? 'Heatmap' : m === 'hex' ? 'Hex Grid' : 'Coverage'}
+                {m === 'heatmap' ? 'Heatmap' : 'Hex Grid'}
               </button>
             ))}
           </div>
