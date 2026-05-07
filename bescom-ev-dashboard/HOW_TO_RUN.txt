@@ -1,0 +1,140 @@
+============================================================
+  GridPulse - BESCOM EV Charging Optimization Dashboard
+  How to Run
+============================================================
+
+PREREQUISITES
+-------------
+1. Node.js (version 18 or higher)
+   Download: https://nodejs.org/
+   Verify:   node --version
+
+2. npm (comes bundled with Node.js)
+   Verify:   npm --version
+
+3. Git (to clone the repository)
+   Download: https://git-scm.com/
+   Verify:   git --version
+
+
+STEP 1 — Clone the Repository
+------------------------------
+   git clone https://github.com/ulric-collaco/banglore.git
+   cd banglore/bescom-ev-dashboard
+
+
+STEP 2 — Install Dependencies
+------------------------------
+   npm install
+
+   This will install all required packages:
+   - React 18
+   - Vite 8 (build tool)
+   - deck.gl (map visualization)
+   - MapLibre GL (base map rendering)
+   - h3-js (hexagonal spatial indexing)
+
+
+STEP 3 — Run the Development Server
+------------------------------------
+   npm run dev
+
+   The terminal will show something like:
+
+     VITE v8.0.10  ready in 500 ms
+     -> Local:   http://localhost:5173/
+
+   Open that URL in your browser (Chrome or Edge recommended).
+
+
+STEP 4 — Use the Dashboard
+---------------------------
+   The dashboard has three tabs in the top navigation bar:
+
+   1. LIVE LOAD
+      - Interactive map of Bengaluru with 25 EV charging stations
+      - Drag the hour slider to see load change across the day
+      - Switch between Heatmap, Hex Grid, and Coverage views
+      - Click any station marker to see its details
+
+   2. SITE PLANNING
+      - Candidate locations for new charging stations
+      - Click candidates on the map to select them
+      - See real-time impact metrics (capacity, sessions, peak relief)
+      - Expand any candidate card to see scoring breakdown
+      - Toggle Before/After comparison view
+
+   3. ALGORITHMS
+      - Full algorithmic audit panel
+      - K-Means++ clustering visualization
+      - Polynomial regression demand curves
+      - Weighted scoring matrix breakdown
+      - Smart charging scheduler results
+      - Baseline comparison (AI vs uniform placement)
+      - System architecture, risks, and evaluation metrics
+
+
+OPTIONAL — Build for Production
+---------------------------------
+   npm run build
+
+   This creates an optimized bundle in the "dist" folder.
+   You can deploy this folder to any static hosting service
+   (Vercel, Netlify, GitHub Pages, etc.)
+
+   To preview the production build locally:
+   npm run preview
+
+
+TROUBLESHOOTING
+---------------
+Q: "npm install" fails with permission errors
+A: Try running your terminal as Administrator, or use:
+   npm install --legacy-peer-deps
+
+Q: Port 5173 is already in use
+A: Vite will automatically try the next port (5174, 5175, etc.)
+   Check the terminal output for the correct URL.
+
+Q: Map tiles are not loading
+A: The map uses free OpenStreetMap tiles via MapLibre.
+   Ensure you have an active internet connection.
+
+Q: Blank screen on load
+A: Open the browser developer console (F12) and check for errors.
+   Make sure all dependencies installed correctly with "npm install".
+
+
+PROJECT STRUCTURE
+-----------------
+bescom-ev-dashboard/
+  index.html              Entry point
+  package.json            Dependencies and scripts
+  vite.config.js          Build configuration
+  src/
+    main.jsx              App bootstrap
+    components/
+      App.jsx             Root component and state management
+      TopBar.jsx          Navigation bar
+      ControlPanel.jsx    Side panel (Live Load + Site Planning)
+      MapView.jsx         deck.gl + MapLibre map
+      MethodsPanel/       Algorithms audit tab
+    algorithms/
+      kmeans.js           K-Means++ clustering
+      regression.js       Polynomial regression
+      scoring.js          Weighted scoring matrix
+      scheduling.js       Smart charging scheduler
+      baseline.js         Baseline comparison engine
+    hooks/
+      useLoadData.js      Data loading and parsing
+      useAlgorithms.js    Algorithm orchestration
+    data/
+      bangalore_ev_data.js   Station + candidate dataset
+    styles/
+      global.css          Global theme and variables
+      *.module.css         Scoped component styles
+
+============================================================
+  No backend required. No API keys needed.
+  Everything runs in the browser.
+============================================================

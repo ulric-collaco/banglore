@@ -1,0 +1,146 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080" role="img" aria-labelledby="title desc">
+  <title id="title">BESCOM EV Intelligence Dashboard Architecture</title>
+  <desc id="desc">Architecture diagram showing data sources, algorithm layer, React hooks and app state, UI components, visualization engine, and user outcomes.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#eef6f5"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#0f172a" flood-opacity="0.12"/>
+    </filter>
+    <marker id="arrow-teal" markerWidth="13" markerHeight="13" refX="10" refY="6.5" orient="auto">
+      <path d="M1,1 L11,6.5 L1,12 Z" fill="#0f766e"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="13" markerHeight="13" refX="10" refY="6.5" orient="auto">
+      <path d="M1,1 L11,6.5 L1,12 Z" fill="#2563eb"/>
+    </marker>
+    <style>
+      .title { font: 800 44px Arial, sans-serif; fill: #172033; letter-spacing: 0; }
+      .subtitle { font: 400 22px Arial, sans-serif; fill: #64748b; letter-spacing: 0; }
+      .lane-title { font: 800 20px Arial, sans-serif; fill: #0f766e; letter-spacing: 0; }
+      .box-title { font: 800 22px Arial, sans-serif; fill: #172033; letter-spacing: 0; }
+      .box-body { font: 400 17px Arial, sans-serif; fill: #475569; letter-spacing: 0; }
+      .small { font: 700 15px Arial, sans-serif; fill: #64748b; letter-spacing: 0; }
+      .pill-text { font: 800 16px Arial, sans-serif; fill: #ffffff; letter-spacing: 0; }
+      .card { fill: #ffffff; stroke: #dbe7ee; stroke-width: 2; filter: url(#shadow); }
+      .module { fill: #ffffff; stroke: #dbe7ee; stroke-width: 2; }
+      .line { fill: none; stroke: #0f766e; stroke-width: 4; marker-end: url(#arrow-teal); }
+      .line-blue { fill: none; stroke: #2563eb; stroke-width: 4; marker-end: url(#arrow-blue); }
+      .muted-line { fill: none; stroke: #cbd5e1; stroke-width: 3; }
+    </style>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <circle cx="1670" cy="160" r="180" fill="#16a34a" opacity="0.05"/>
+  <circle cx="145" cy="925" r="230" fill="#2563eb" opacity="0.05"/>
+
+  <text class="title" x="90" y="88">BESCOM EV Intelligence Dashboard Architecture</text>
+  <text class="subtitle" x="92" y="126">Local-first React + Vite dashboard for Bengaluru EV charging operations, planning, and model audit</text>
+
+  <text class="lane-title" x="94" y="188">DATA</text>
+  <text class="lane-title" x="418" y="188">ALGORITHMS</text>
+  <text class="lane-title" x="815" y="188">APPLICATION STATE</text>
+  <text class="lane-title" x="1182" y="188">USER EXPERIENCE</text>
+  <text class="lane-title" x="1530" y="188">OUTCOMES</text>
+
+  <rect class="card" x="76" y="220" rx="18" width="290" height="214"/>
+  <text class="box-title" x="112" y="270">Data Sources</text>
+  <text class="box-body" x="112" y="312">CSV charging stations</text>
+  <text class="box-body" x="112" y="346">Hourly load profiles</text>
+  <text class="box-body" x="112" y="380">Synthetic candidate sites</text>
+  <rect x="112" y="405" rx="14" width="150" height="34" fill="#0f766e"/>
+  <text class="pill-text" x="132" y="428">25 stations</text>
+
+  <rect class="card" x="76" y="505" rx="18" width="290" height="160"/>
+  <text class="box-title" x="112" y="552">Data Layer</text>
+  <text class="box-body" x="112" y="595">bangalore_ev_data.js</text>
+  <text class="small" x="112" y="628">Station metadata and profiles</text>
+
+  <path class="line" d="M221 434 L221 496"/>
+
+  <rect class="card" x="420" y="224" rx="18" width="316" height="572"/>
+  <text class="box-title" x="458" y="274">Algorithm Layer</text>
+
+  <rect class="module" x="458" y="315" rx="12" width="240" height="64"/>
+  <text class="box-body" x="484" y="341">K-Means clustering</text>
+  <text class="small" x="484" y="365">Demand corridors</text>
+
+  <rect class="module" x="458" y="398" rx="12" width="240" height="64"/>
+  <text class="box-body" x="484" y="424">Polynomial regression</text>
+  <text class="small" x="484" y="448">Peak and off-peak windows</text>
+
+  <rect class="module" x="458" y="481" rx="12" width="240" height="64"/>
+  <text class="box-body" x="484" y="507">Weighted scoring</text>
+  <text class="small" x="484" y="531">Ranked buildout sites</text>
+
+  <rect class="module" x="458" y="564" rx="12" width="240" height="64"/>
+  <text class="box-body" x="484" y="590">Scheduling engine</text>
+  <text class="small" x="484" y="614">Load-shift advice</text>
+
+  <rect class="module" x="458" y="647" rx="12" width="240" height="64"/>
+  <text class="box-body" x="484" y="673">Buildout impact</text>
+  <text class="small" x="484" y="697">Before/after relief</text>
+
+  <rect x="458" y="735" rx="14" width="144" height="34" fill="#d97706"/>
+  <text class="pill-text" x="482" y="758">15 sites</text>
+
+  <path class="line" d="M366 585 L410 585"/>
+
+  <rect class="card" x="807" y="244" rx="18" width="290" height="172"/>
+  <text class="box-title" x="842" y="293">React Hooks</text>
+  <text class="box-body" x="842" y="335">useAlgorithms</text>
+  <text class="box-body" x="842" y="369">useLoadData</text>
+
+  <rect class="card" x="807" y="502" rx="18" width="290" height="214"/>
+  <text class="box-title" x="842" y="551">App State</text>
+  <text class="box-body" x="842" y="593">Mode and hour</text>
+  <text class="box-body" x="842" y="627">Filters and sorting</text>
+  <text class="box-body" x="842" y="661">Selected sites</text>
+  <text class="box-body" x="842" y="695">Comparison view</text>
+
+  <path class="line" d="M736 410 L798 330"/>
+  <path class="line" d="M736 610 L798 610"/>
+  <path class="line-blue" d="M952 416 L952 493"/>
+
+  <rect class="card" x="1180" y="224" rx="18" width="300" height="568"/>
+  <text class="box-title" x="1218" y="274">UI Layer</text>
+
+  <rect class="module" x="1218" y="315" rx="12" width="224" height="58"/>
+  <text class="box-body" x="1244" y="351">TopBar</text>
+  <rect class="module" x="1218" y="392" rx="12" width="224" height="58"/>
+  <text class="box-body" x="1244" y="428">ControlPanel</text>
+  <rect class="module" x="1218" y="469" rx="12" width="224" height="58"/>
+  <text class="box-body" x="1244" y="505">MapView</text>
+  <rect class="module" x="1218" y="546" rx="12" width="224" height="58"/>
+  <text class="box-body" x="1244" y="582">MethodsPanel</text>
+
+  <rect x="1218" y="640" rx="14" width="224" height="34" fill="#2563eb"/>
+  <text class="pill-text" x="1260" y="663">React components</text>
+
+  <path class="line" d="M1097 610 L1170 610"/>
+
+  <rect class="card" x="1180" y="838" rx="18" width="300" height="132"/>
+  <text class="box-title" x="1218" y="884">Visualization Engine</text>
+  <text class="box-body" x="1218" y="925">MapLibre + deck.gl layers</text>
+
+  <path class="line-blue" d="M1330 792 L1330 829"/>
+
+  <rect class="card" x="1544" y="262" rx="18" width="300" height="470"/>
+  <text class="box-title" x="1582" y="312">User Outcomes</text>
+  <text class="box-body" x="1582" y="362">Live load monitoring</text>
+  <text class="box-body" x="1582" y="408">Infrastructure planning</text>
+  <text class="box-body" x="1582" y="454">Explainable recommendations</text>
+  <text class="box-body" x="1582" y="500">Buildout impact review</text>
+  <text class="box-body" x="1582" y="546">Science-mode audit</text>
+
+  <rect x="1582" y="606" rx="14" width="190" height="34" fill="#16a34a"/>
+  <text class="pill-text" x="1604" y="629">2.4 MW buildout</text>
+
+  <path class="line" d="M1480 506 L1534 506"/>
+  <path class="line-blue" d="M1480 904 C1552 904 1568 732 1610 732"/>
+
+  <rect x="90" y="892" rx="18" width="960" height="92" fill="#ffffff" stroke="#dbe7ee" stroke-width="2"/>
+  <text class="box-title" x="126" y="930">Key implementation files</text>
+  <text class="box-body" x="126" y="962">src/hooks/useAlgorithms.js • src/hooks/useLoadData.js • src/components/MapView.jsx • src/utils/buildoutImpact.js</text>
+</svg>

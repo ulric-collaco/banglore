@@ -5,10 +5,10 @@
   padding: 14px 16px;
   pointer-events: none;
   background: rgba(255, 255, 255, 0.95);
-  border: 1px solid #1e293b;
-  border-radius: 8px;
-  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(8px);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  box-shadow: var(--shadow-premium);
+  backdrop-filter: blur(12px);
   animation: enter 150ms ease;
 }
 @keyframes enter {
@@ -28,7 +28,7 @@
 .separator {
   height: 1px;
   margin: 10px 0;
-  background: #1e293b;
+  background: var(--color-border);
 }
 .row {
   display: flex;
