@@ -151,16 +151,22 @@ export default function ControlPanel({
     );
   }
 
-  const maxTotalLoad = Math.max(...loadStats.hourlyTotalLoad, 1);
+  const hourlyData = comparisonView === 'after' && buildoutStats?.afterHourlyTotalLoad 
+    ? buildoutStats.afterHourlyTotalLoad 
+    : loadStats.hourlyTotalLoad;
+
+  const baselineMax = Math.max(...loadStats.hourlyTotalLoad, 1);
+  const afterMax = buildoutStats?.afterHourlyTotalLoad ? Math.max(...buildoutStats.afterHourlyTotalLoad, 1) : 1;
+  const maxTotalLoad = Math.max(baselineMax, afterMax);
   const cursorX = (sliderValue / 23) * 100;
   
   const h1 = Math.floor(sliderValue);
   const h2 = Math.min(23, Math.ceil(sliderValue));
   const fraction = sliderValue - h1;
-  const interpolatedLoad = loadStats.hourlyTotalLoad[h1] + (loadStats.hourlyTotalLoad[h2] - loadStats.hourlyTotalLoad[h1]) * fraction;
+  const interpolatedLoad = hourlyData[h1] + (hourlyData[h2] - hourlyData[h1]) * fraction;
 
   const sparklinePath = (() => {
-    const data = loadStats.hourlyTotalLoad;
+    const data = hourlyData;
     const width = 1000; // Use a large fixed coordinate system for smoothness
     const height = 80;
     const pts = data.map((val, i) => ({

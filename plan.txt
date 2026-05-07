@@ -1,0 +1,18 @@
+How to run the GridPulse project:
+
+1. Open a terminal or command prompt.
+2. Navigate to the project directory by typing:
+   cd c:\code\banglore\bescom-ev-dashboard
+   Press Enter.
+3. Install the required dependencies by typing:
+   npm install
+   Press Enter and wait for it to finish.
+4. Start the development server by typing:
+   npm run dev
+   Press Enter.
+5. Open your web browser and go to the local address provided in the terminal (usually http://localhost:5173).
+6. To build the project for production, type:
+   npm run build
+   Press Enter.
+
+Note: Make sure you have Node.js installed on your computer before running these commands.

@@ -33,10 +33,9 @@
 .candidateCards {
   display: flex;
   gap: 6px;
-  padding: 8px 14px;
+  padding: 12px 14px;
   overflow-x: auto;
-  border-top: 1px solid rgba(148, 163, 184, 0.12);
-  background: rgba(15, 23, 42, 0.56);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .candidateCard {

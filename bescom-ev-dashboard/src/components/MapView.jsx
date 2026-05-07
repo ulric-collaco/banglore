@@ -418,7 +418,7 @@ export default function MapView({
     }
   };
 
-  const filteredStations = stationsWithLoad
+  const filteredStations = mapStations
     .filter(s => `${s.name} ${s.operator} ${s.zone_type}`.toLowerCase().includes(searchTerm.toLowerCase()))
     .sort((a, b) => b.load_factor - a.load_factor);
 

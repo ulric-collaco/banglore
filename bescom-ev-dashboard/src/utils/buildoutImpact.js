@@ -64,7 +64,7 @@ export function createAfterBuildStations(stationsWithLoad, plannedSites, hour) {
   return [...relievedStations, ...plannedStations];
 }
 
-export function summarizeBuildoutImpact(stationsWithLoad, plannedSites, hour) {
+export function summarizeBuildoutImpact(stationsWithLoad, plannedSites, hour, loadProfiles) {
   const afterStations = createAfterBuildStations(stationsWithLoad, plannedSites, hour);
   const relievedExisting = afterStations.filter((station) => station.status !== 'planned');
   const beforeKw = stationsWithLoad.reduce((sum, station) => sum + station.kw_in_use, 0);
@@ -77,6 +77,25 @@ export function summarizeBuildoutImpact(stationsWithLoad, plannedSites, hour) {
   const avgBefore = stationsWithLoad.reduce((sum, station) => sum + station.load_factor, 0) / Math.max(1, stationsWithLoad.length);
   const avgAfter = relievedExisting.reduce((sum, station) => sum + station.load_factor, 0) / Math.max(1, relievedExisting.length);
 
+  let afterHourlyTotalLoad = null;
+  if (loadProfiles) {
+    const profileByStation = new Map(loadProfiles.map((p) => [p.station_id, p.hourly]));
+    afterHourlyTotalLoad = Array.from({ length: 24 }, (_, h) => {
+      let kw = 0;
+      for (const station of stationsWithLoad) {
+        const originalLf = profileByStation.get(station.id)?.[h] ?? 0;
+        const relief = reliefForStation(station, plannedSites, h);
+        const newLf = originalLf * (1 - relief);
+        kw += newLf * station.capacity_kw;
+      }
+      for (const site of plannedSites) {
+        const lf = plannedSiteLoadFactor(site, h);
+        kw += lf * site.recommended_capacity_kw;
+      }
+      return kw;
+    });
+  }
+
   return {
     plannedCount: plannedSites.length,
     addedCapacity: plannedSites.reduce((sum, site) => sum + site.recommended_capacity_kw, 0),
@@ -86,6 +105,7 @@ export function summarizeBuildoutImpact(stationsWithLoad, plannedSites, hour) {
     beforeCritical,
     afterCritical,
     avgLoadDrop: Math.max(0, Math.round((avgBefore - avgAfter) * 100)),
-    totalAfterKw: Math.round(afterExistingKw + plannedKw)
+    totalAfterKw: Math.round(afterExistingKw + plannedKw),
+    afterHourlyTotalLoad
   };
 }

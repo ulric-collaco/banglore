@@ -65,7 +65,7 @@ export default function App() {
   }, [selectedCandidates]);
 
   const buildoutStats = useMemo(
-    () => summarizeBuildoutImpact(loadData.stationsWithLoad, algorithms.scoringResults, hour),
+    () => summarizeBuildoutImpact(loadData.stationsWithLoad, algorithms.scoringResults, hour, HOURLY_LOAD_PROFILES),
     [loadData.stationsWithLoad, algorithms.scoringResults, hour]
   );
 
@@ -106,17 +106,19 @@ export default function App() {
               ))}
             </div>
           )}
-          <div className={`vizSwitcher ${panelOpen ? 'panelOpen' : ''}`}>
-            {['heatmap', 'hex'].map(m => (
-              <button 
-                key={m} 
-                className={vizMode === m ? 'active' : ''} 
-                onClick={() => setVizMode(m)}
-              >
-                {m === 'heatmap' ? 'Heatmap' : 'Hex Grid'}
-              </button>
-            ))}
-          </div>
+          {mode === 0 && (
+            <div className={`vizSwitcher ${panelOpen ? 'panelOpen' : ''}`}>
+              {['heatmap', 'hex'].map(m => (
+                <button 
+                  key={m} 
+                  className={vizMode === m ? 'active' : ''} 
+                  onClick={() => setVizMode(m)}
+                >
+                  {m === 'heatmap' ? 'Heatmap' : 'Hex Grid'}
+                </button>
+              ))}
+            </div>
+          )}
           {mode < 2 && (
             <ControlPanel
               mode={mode}
