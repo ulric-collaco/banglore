@@ -15,10 +15,10 @@ export default function MethodsPanel({ active, stations, loadProfiles, algorithm
   return (
     <section className={`${styles.methodsPanel} ${active ? styles.active : ''}`} aria-hidden={!active}>
       <div className={styles.header}>
-        <h1>Algorithmic Foundation</h1>
+        <h1>GridPulse — Algorithmic Audit</h1>
         <p>
-          Five pure-JavaScript algorithms power BESCOM's EV decision layer — built without ML libraries to ensure full
-          transparency, auditability, and data sovereignty. No hosted LLM or external API is used for analysis.
+          Five transparent algorithms power GridPulse's decision layer — built in pure JavaScript without ML library
+          dependencies to ensure full auditability and data sovereignty. Every weight, coefficient, and factor is visible below.
         </p>
       </div>
       <AlgoCard

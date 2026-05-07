@@ -6,10 +6,10 @@ function formatHour(hour) {
 }
 
 const SEVERITY_STYLE = {
-  critical: { bg: 'rgba(239,68,68,0.18)', color: '#fca5a5', label: 'Critical' },
-  elevated: { bg: 'rgba(249,115,22,0.18)', color: '#fdba74', label: 'Elevated' },
-  moderate: { bg: 'rgba(234,179,8,0.18)', color: '#fde047', label: 'Moderate' },
-  low: { bg: 'rgba(34,197,94,0.18)', color: '#86efac', label: 'Low' }
+  critical: { bg: 'rgba(239,68,68,0.1)', color: '#dc2626', label: 'Critical' },
+  elevated: { bg: 'rgba(249,115,22,0.1)', color: '#c2410c', label: 'Elevated' },
+  moderate: { bg: 'rgba(234,179,8,0.1)', color: '#a16207', label: 'Moderate' },
+  low: { bg: 'rgba(22,163,74,0.1)', color: '#15803d', label: 'Low' }
 };
 
 export default function SchedulingViz({ schedules, summary }) {
@@ -61,7 +61,7 @@ export default function SchedulingViz({ schedules, summary }) {
                 <td style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '11px' }}>
                   {formatHour(schedule.offpeakStart)}–{formatHour(schedule.offpeakEnd + 1)}
                 </td>
-                <td style={{ fontWeight: 700, color: schedule.shiftPct > 25 ? '#fca5a5' : '#bbf7d0' }}>
+                <td style={{ fontWeight: 700, color: schedule.shiftPct > 25 ? '#dc2626' : '#15803d' }}>
                   {schedule.shiftPct}%
                 </td>
                 <td>{schedule.reliefKw} kW</td>
@@ -73,7 +73,7 @@ export default function SchedulingViz({ schedules, summary }) {
 
       {summary.topActions.length > 0 && (
         <div style={{ marginTop: '20px' }}>
-          <h3 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: '#e2e8f0' }}>
+          <h3 style={{ margin: '0 0 12px', fontSize: '14px', fontWeight: 700, color: '#0f172a' }}>
             Top Scheduling Actions
           </h3>
           {summary.topActions.map((action, i) => (
@@ -81,15 +81,15 @@ export default function SchedulingViz({ schedules, summary }) {
               padding: '10px 14px', marginBottom: '8px',
               borderLeft: '3px solid var(--color-bescom-orange)',
               borderRadius: '0 6px 6px 0',
-              background: 'rgba(249,115,22,0.08)',
+              background: 'rgba(249,115,22,0.05)',
               fontSize: '13px', lineHeight: '1.5'
             }}>
-              <strong style={{ color: '#fdba74' }}>{action.station}</strong>
+              <strong style={{ color: '#c2410c' }}>{action.station}</strong>
               <span style={{ color: '#94a3b8', margin: '0 8px' }}>→</span>
-              <span style={{ color: '#cbd5e1' }}>{action.action}</span>
+              <span style={{ color: '#334155' }}>{action.action}</span>
               <span style={{
                 marginLeft: '10px', padding: '1px 6px', borderRadius: '4px',
-                background: 'rgba(22,163,74,0.18)', color: '#86efac',
+                background: 'rgba(22,163,74,0.1)', color: '#15803d',
                 fontSize: '11px', fontWeight: 700
               }}>{action.impact}</span>
             </div>
@@ -108,13 +108,13 @@ function StatBox({ label, value, critical = false }) {
   return (
     <div style={{
       padding: '12px 14px', borderRadius: '8px',
-      background: 'rgba(15,23,42,0.62)',
-      border: '1px solid rgba(148,163,184,0.14)'
+      background: '#f8fafc',
+      border: '1px solid rgba(148,163,184,0.22)'
     }}>
-      <span style={{ display: 'block', fontSize: '10px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
+      <span style={{ display: 'block', fontSize: '10px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: '4px' }}>
         {label}
       </span>
-      <strong style={{ fontSize: '18px', fontFamily: "'JetBrains Mono', monospace", color: critical ? '#f87171' : '#f8fafc' }}>
+      <strong style={{ fontSize: '18px', fontFamily: "'JetBrains Mono', monospace", color: critical ? '#dc2626' : '#0f172a' }}>
         {value}
       </strong>
     </div>

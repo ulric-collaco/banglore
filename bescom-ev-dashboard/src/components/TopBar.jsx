@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import styles from '../styles/TopBar.module.css';
 
-const MODES = ['Live Load', 'Site Planning', 'Methods'];
+const MODES = ['Live Load', 'Site Planning', 'Algorithms'];
 
 export default function TopBar({ mode, onModeChange, stationCount }) {
   const [now, setNow] = useState(new Date());
@@ -14,10 +14,10 @@ export default function TopBar({ mode, onModeChange, stationCount }) {
   return (
     <header className={styles.topBar}>
       <div className={styles.brand}>
-        <span className={styles.logo}>BESCOM</span>
+        <span className={styles.logo}>GridPulse</span>
         <span>
-          <strong>EV GridOps</strong>
-          <small>Bengaluru planning map</small>
+          <strong>BESCOM</strong>
+          <small>EV Charging Optimization</small>
         </span>
       </div>
       <nav className={styles.switcher} aria-label="Dashboard mode switcher">

@@ -51,7 +51,7 @@ export default function BaselineViz({ comparison }) {
                 <td className={aiWins ? styles.strongScore : styles.weakScore}>
                   {typeof aiVal === 'number' ? aiVal.toLocaleString() : aiVal}{unit}
                 </td>
-                <td style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '12px' }}>
+                <td style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: '12px', color: '#334155' }}>
                   {key === 'avgGapKm' && `${improvement.gapReduction}% closer`}
                   {key === 'coveragePct' && `+${improvement.coverageGain}% more`}
                   {key === 'totalSessions' && `+${improvement.sessionGain}% demand captured`}
@@ -67,18 +67,18 @@ export default function BaselineViz({ comparison }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginTop: '20px' }}>
         <div>
-          <span style={{ fontSize: '10px', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             Uniform — Coverage Reach
           </span>
           {bar(uniform.coveragePct, 100, '#94a3b8')}
-          <span style={{ fontSize: '11px', color: '#94a3b8' }}>{uniform.coveragePct}%</span>
+          <span style={{ fontSize: '11px', color: '#64748b' }}>{uniform.coveragePct}%</span>
         </div>
         <div>
-          <span style={{ fontSize: '10px', fontWeight: 800, color: '#16a34a', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+          <span style={{ fontSize: '10px', fontWeight: 800, color: '#15803d', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
             AI-Optimized — Coverage Reach
           </span>
           {bar(ai.coveragePct, 100, '#16a34a')}
-          <span style={{ fontSize: '11px', color: '#bbf7d0' }}>{ai.coveragePct}%</span>
+          <span style={{ fontSize: '11px', color: '#15803d' }}>{ai.coveragePct}%</span>
         </div>
       </div>
 
